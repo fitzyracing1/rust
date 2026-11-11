@@ -1,3 +1,3 @@
-pub fn greet(name: &str) -> String {
+pub fn welcome(name: &str) -> String {
     format!("Hello, {name}!")
 }

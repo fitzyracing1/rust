@@ -1,0 +1,33 @@
+# merge-guard v0.1.0 trial. Runs only on PRs that target the
+# merge-guard-trial-base branch, so the rest of the fork is untouched.
+#
+# Two jobs on purpose:
+#   - merge-guard:      tests the MERGED result against the current base
+#   - plain-head-check: tests only the PR head (the naive baseline)
+# A PR that is green on its own head but dark once merged shows up as
+# plain-head-check = green, merge-guard = dark.
+name: merge-guard-trial
+
+on:
+  pull_request:
+    branches:
+      - merge-guard-trial-base
+
+jobs:
+  merge-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: fitzyracing1/merge-guard@v0.1.0
+        with:
+          ci-command: bash .github/merge-guard-ci.sh
+
+  plain-head-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: bash .github/merge-guard-ci.sh

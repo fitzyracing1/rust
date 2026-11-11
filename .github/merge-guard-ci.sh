@@ -7,7 +7,9 @@
 # GitHub-hosted runner limits.
 set -euo pipefail
 
-./x.py test tidy
+# GitHub Actions sets CI=true; rust's x.py then requires an explicit
+# --stage. tidy does not need a compiler build, so stage 1 is enough.
+./x.py test tidy --stage 1
 
 if [ -d merge-guard-trial ]; then
   rustc --edition 2021 --crate-type lib merge-guard-trial/a.rs -o /tmp/merge-guard-a.rlib
